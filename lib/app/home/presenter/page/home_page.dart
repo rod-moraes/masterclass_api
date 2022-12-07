@@ -31,6 +31,10 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void _refresh() {
+    bloc.add(const RefreshAnimesEvent(page: 1, perPage: 10));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -40,7 +44,7 @@ class _HomePageState extends State<HomePage> {
         AnimeRepository(datasource: datasource);
     final GetListAnimesContract usecase = GetListAnimes(repository);
     bloc = AnimesBloc(usecase);
-    bloc.add(const GetListAnimesEvent(page: 1, perPage: 10));
+    _refresh();
     _scrollController = ScrollController();
     _scrollController.addListener(_getMoreAnimes);
   }
@@ -59,6 +63,12 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Masterclass 5'),
+        actions: [
+          Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: IconButton(
+                  onPressed: _refresh, icon: const Icon(Icons.refresh)))
+        ],
       ),
       body: BlocBuilder<AnimesBloc, AnimesState>(
           bloc: bloc,

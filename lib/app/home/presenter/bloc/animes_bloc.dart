@@ -9,16 +9,28 @@ class AnimesBloc extends Bloc<AnimesEvent, AnimesState> {
   final GetListAnimesContract usecase;
   AnimesBloc(this.usecase) : super(const AnimesStateIdle()) {
     on<GetListAnimesEvent>(_getListAnimes);
+    on<RefreshAnimesEvent>(_refreshListAnimes);
+  }
+
+  Future<void> _refreshListAnimes(
+      RefreshAnimesEvent event, Emitter<AnimesState> emit) async {
+    try {
+      emit(const AnimesStateLoadingInitial(animes: []));
+      final listAnime = await usecase(page: event.page, perPage: event.perPage);
+      final list = <AnimeModel>[];
+      list
+        ..addAll(state.animes)
+        ..addAll(listAnime);
+      emit(AnimesStateSuccess(animes: list));
+    } on ServerException catch (e) {
+      emit(AnimesStateError(message: e.message));
+    }
   }
 
   Future<void> _getListAnimes(
       GetListAnimesEvent event, Emitter<AnimesState> emit) async {
     try {
-      if (state is AnimesStateIdle) {
-        emit(AnimesStateLoadingInitial(animes: state.animes));
-      } else {
-        emit(AnimesStateLoading(animes: state.animes));
-      }
+      emit(AnimesStateLoading(animes: state.animes));
       final listAnime = await usecase(page: event.page, perPage: event.perPage);
       final list = <AnimeModel>[];
       list
