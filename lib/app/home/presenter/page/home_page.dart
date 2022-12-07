@@ -60,92 +60,90 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Masterclass 5'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: BlocBuilder<AnimesBloc, AnimesState>(
-            bloc: bloc,
-            builder: (context, state) {
-              if (state is AnimesStateError) {
-                return Center(child: Text(state.message));
-              }
-              if (state is AnimesStateSuccess || state is AnimesStateLoading) {
-                return Column(
-                  children: [
-                    Expanded(
-                      child: ListView.builder(
-                        controller: _scrollController,
-                        itemCount: state.animes.length,
-                        itemBuilder: (context, index) {
-                          final itens = state.animes;
-                          final item = itens.elementAt(index);
+      body: BlocBuilder<AnimesBloc, AnimesState>(
+          bloc: bloc,
+          builder: (context, state) {
+            if (state is AnimesStateError) {
+              return Center(child: Text(state.message));
+            }
+            if (state is AnimesStateSuccess || state is AnimesStateLoading) {
+              return Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      controller: _scrollController,
+                      itemCount: state.animes.length,
+                      itemBuilder: (context, index) {
+                        final itens = state.animes;
+                        final item = itens.elementAt(index);
 
-                          final title = item.title;
-                          final description = item.description;
-                          final date = item.date;
-                          final link = item.link;
+                        final title = item.title;
+                        final description = item.description;
+                        final date = item.date;
+                        final link = item.link;
 
-                          return Card(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 12,
-                                horizontal: 12,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          title,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            color: theme.primaryColor,
-                                            fontSize: 18,
-                                          ),
+                        return Card(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 12,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        title,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: theme.primaryColor,
+                                          fontSize: 18,
                                         ),
                                       ),
-                                      Text(
-                                        '${date.day}/${date.month}/${date.year}',
-                                        style:
-                                            Theme.of(context).textTheme.caption,
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    description,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 3,
-                                  ),
-                                  Align(
-                                    alignment: Alignment.bottomRight,
-                                    child: TextButton(
-                                      onPressed: () => launchUrlString(link),
-                                      child: const Text(
-                                        'Acessar matéria',
-                                      ),
+                                    ),
+                                    Text(
+                                      '${date.day}/${date.month}/${date.year}',
+                                      style:
+                                          Theme.of(context).textTheme.caption,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  description,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 3,
+                                ),
+                                Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: TextButton(
+                                    onPressed: () => launchUrlString(link),
+                                    child: const Text(
+                                      'Acessar matéria',
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      },
                     ),
-                    if (state is AnimesStateLoading)
-                      const Center(
-                          child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: CircularProgressIndicator(),
-                      ))
-                  ],
-                );
-              }
-              return const Center(child: CircularProgressIndicator());
-            }),
-      ),
+                  ),
+                  if (state is AnimesStateLoading)
+                    const Center(
+                        child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: CircularProgressIndicator(),
+                    ))
+                ],
+              );
+            }
+            return const Center(child: CircularProgressIndicator());
+          }),
     );
   }
 }
